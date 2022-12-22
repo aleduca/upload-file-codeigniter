@@ -25,9 +25,23 @@ class Upload extends BaseController
       return redirect()->route('home');
     }
 
-    if (!$img->hasMoved()) {
-      $img->store('../../public/assets/img', $img->getName());
+    $name = $img->getRandomName();
 
+    \Config\Services::image('gd')
+      ->withFile($img)
+      ->resize(640, 480, true)
+      ->text('Copyright 2017 My Photo Co', [
+        'color'      => '#fff',
+        'opacity'    => 0.5,
+        'withShadow' => true,
+        'hAlign'     => 'center',
+        'vAlign'     => 'bottom',
+        'fontSize'   => 20,
+      ])
+      ->save(FCPATH . 'assets/img/' . $name);
+
+    if (!$img->hasMoved()) {
+      // $img->store('../../public/assets/img', $img->getName());
       session()->setFlashdata('uploaded', 'Uploaded successfully');
       return redirect()->route('home');
     }
